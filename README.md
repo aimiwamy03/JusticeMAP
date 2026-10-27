@@ -1,471 +1,207 @@
-# JusticeMAP - AI-Powered Wrongful Conviction Analysis Platform
+# JusticeMAP
 
-A comprehensive platform combining **AI-powered innocence detection** with **multi-user case management** for analyzing parole hearing transcripts and identifying potential wrongful convictions.
+AI-powered wrongful conviction analysis platform for parole hearing transcripts. Built for an innocence center to help volunteers identify and prioritize potential wrongful conviction cases.
 
-## 🎯 Overview
+## What It Does
 
-JusticeMAP is a production-ready platform that helps volunteers identify and prioritize cases with strong innocence signals using advanced AI analysis and collaborative case management tools.
+JusticeMAP combines AI analysis with multi-user case management to streamline the review of parole hearing transcripts. Volunteers can quickly identify cases with strong innocence signals, collaborate on case reviews, and generate comprehensive intake forms and memos for legal teams.
 
-**Key Innovation:** Every client card displays an AI-generated summary of the most compelling innocence indicator from their transcript, powered by Google's Gemini AI.
+**For whom:** Innocence center volunteers, legal advocates, and case reviewers analyzing California parole hearings.
 
----
+**The problem:** Reviewing parole transcripts manually is time-consuming. Important innocence indicators can be buried in hundreds of pages. Extracting structured data for legal forms takes hours per case.
 
-## ✨ Key Features
+**The solution:** Automated AI analysis surfaces the most compelling innocence signals, while smart form extraction converts transcripts into structured legal documents in seconds.
 
-### 🤖 AI-Powered Innocence Detection
-- **Gemini 2.0 Flash Lite** integration for advanced natural language analysis
-- **AI-generated innocence insights** on every client card - no more generic "available for review" text
-- **Intelligent transcript chunking** preserving speaker context
-- **4 signal types detected:**
-  - Explicit claims ("I didn't do it")
-  - Contextual signals (coerced confessions, evidence gaps)
-  - Implicit signals (maintained innocence despite consequences)
-  - Bias language (institutional patterns like "lack of insight")
-- **Enhanced memo generation** with deep parsing (3-7 patterns per field)
+## Key Features
 
-### 👥 Multi-User Collaboration
-- **Personalized Case Pipeline** - Each volunteer sees only their assigned cases
-- **Volunteer authentication** with role-based access
-- **Smart case assignment** workflow with "Assign to Me" buttons
-- **Kanban board** tracking: Assigned to Me → Under Review → Forms Generated → Commissioner Panel Scheduled
-- **Collaborative workspace** with team analytics
+### AI Innocence Detection
 
-### 📊 Commissioner Analysis
-- **Database of 23+ California BPH commissioners** with live updates
-- **Dynamic background categorization:**
-  - Law Enforcement & Corrections
-  - Legal, Judicial & Prosecution
-  - Legal, Judicial & Mixed Legal
-  - Mental Health & Social Services
-  - Parole Board Administration
-- **Enhanced bias detection** with 15 bias language patterns (3x more comprehensive)
-- **Commissioner profile pages** with LinkedIn/CDCR links
-- **Panel composition analysis** for bias risk assessment
-- **Real-time statistics** from database across 294 transcripts
+The platform analyzes transcripts to detect four types of signals:
 
-### 📝 Automated Form Generation
-- **Enhanced parsing accuracy** with multi-pattern matching (3-7 attempts per field)
-- **Deep evidence extraction** identifying 5-10 specific pieces of evidence
-- **Comprehensive conviction details** including enhancements and multiple counts
-- **Multi-factor theory analysis** detecting 8 different wrongful conviction theories
-- **Smart text normalization** fixing common transcript issues
-- **20 wrongful conviction issue categories** with auto-checked boxes
-- **One-click download** of formatted CONFIDENTIAL INTEROFFICE MEMORANDUM
+1. **Explicit claims** - Direct statements of innocence ("I didn't do it", "I'm innocent")
+2. **Contextual signals** - Evidence-based indicators like coerced confessions, alibi evidence, witness recantations, or evidence gaps
+3. **Implicit signals** - Maintaining innocence despite consequences (refusing plea deals, accepting harsher sentences)
+4. **Bias language** - Institutional patterns like "lack of insight" (often used when someone refuses to admit guilt)
 
-### 🎯 Priority Recommendations
-- **AI-driven case ranking** (0-100 score)
-- **Multi-factor algorithm:**
-  - Innocence claim strength (0-30 pts) - uses AI analysis
-  - Commissioner bias risk (0-25 pts) - panel composition
-  - Case urgency (0-25 pts) - hearing recency
-  - Assignment status (0-20 pts) - unassigned = higher priority
-- **Top 3 recommendations** in AI Priority Picks sidebar
-- **Real-time updates** as cases are assigned
+Every client card displays an AI-generated summary of the most compelling innocence indicator from their transcript. No more generic "available for review" text.
 
-### 📄 PDF Storage & Viewing
-- **Original PDF storage** in Supabase Storage
-- **View Full Transcript** button opens original PDF in new tab
-- **Line and page citations** for all AI-detected signals
-- **Clean transcript formatting** with speaker labels and line numbers
+**How it works:**
+- Transcripts are intelligently chunked to preserve speaker context
+- Each chunk is analyzed by Gemini 2.0 Flash Lite
+- System validates all findings with exact quotes, line numbers, and page citations
+- Results are ranked by confidence and deduplicated across chunks
 
----
+### Multi-User Case Management
 
-## 🚀 Quick Start
+- Personal kanban board tracks each volunteer's cases through four stages: Assigned to Me, Under Review, Forms Generated, and Commissioner Panel Scheduled
+- Smart assignment workflow lets volunteers claim cases with an "Assign to Me" button
+- Each volunteer sees only their assigned cases on their dashboard
+- AI Priority Picks sidebar ranks unassigned cases by innocence strength, commissioner bias risk, urgency, and assignment status
 
-### Prerequisites
+### Commissioner Bias Analysis
 
-- Node.js 18+ ([install with nvm](https://github.com/nvm-sh/nvm))
-- Supabase account (free tier works)
-- Google Gemini API key ([get one here](https://aistudio.google.com/apikey))
+The system maintains a database of 23+ California Board of Parole Hearings commissioners with detailed backgrounds. For each case, it:
 
-### Setup
+- Identifies which commissioners were on the panel
+- Categorizes backgrounds (Law Enforcement, Prosecution, Legal/Mixed, Mental Health, Parole Administration)
+- Detects 15 bias language patterns in commissioner statements
+- Assesses bias risk based on panel composition
+- Links to LinkedIn or CDCR profiles for each commissioner
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/kaiwenzhou/innocence-grid.git
-   cd innocence-grid
-   ```
+This helps volunteers and attorneys prepare for hearings and identify high-risk panel compositions.
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+### Automated Form Generation
 
-3. **Set up Supabase database**
-   - Create a new Supabase project
-   - Open SQL Editor
-   - Run `complete-commissioners-setup.sql` to create tables and populate commissioner data
-   - Run `add-pdf-storage.sql` to add PDF storage columns
-   - Run `FIX_MISSING_STATUS_COLUMN.sql` to ensure all required columns exist
-   - Create Storage bucket `transcript-pdfs` with public access
+The form processor extracts 45+ structured fields from transcripts to auto-fill client intake forms:
 
-4. **Configure environment variables**
-   ```bash
-   # Create .env file with:
-   VITE_SUPABASE_URL=https://your-project.supabase.co
-   VITE_SUPABASE_ANON_KEY=your-anon-key-here
-   VITE_GEMINI_API_KEY=your-gemini-api-key-here
-   ```
+- Personal info (name, CDCR number, DOB, facility, education, military service)
+- Attorney information (trial counsel, appellate counsel)
+- Case details (crime date, conviction, sentence, appeals, parole eligibility)
+- Family contacts and support information
+- Evidence of wrongful conviction across 20 categories
 
-5. **Start development server**
-   ```bash
-   npm run dev
-   ```
+The system uses multi-pattern matching (3-7 extraction attempts per field) and generates downloadable memos with exact citations. This saves volunteers 20-40 minutes per case.
 
-   Visit **http://localhost:3000**
+## Tech Stack
 
-### First Steps
+**Frontend:**
+- React 18 with TypeScript 5.8 for type safety
+- Vite 5.4 for fast builds and hot module replacement
+- Tailwind CSS 3.4 with shadcn/ui component library
+- React Router 6 with lazy loading
 
-1. **Create volunteer account** on login page
-2. **Navigate to Clients page** (first tab)
-3. **Upload transcripts** (PDF or TXT format via Upload page)
-4. **View AI-generated insights** on each client card
-5. **Assign cases to yourself** using "Assign to Me" button
-6. **Track your cases** in "My Case Pipeline"
-7. **Generate forms** from "Under Review" column
-8. **Analyze commissioner bias** in Commissioner Breakdown
+**Backend:**
+- Supabase (PostgreSQL database, authentication, file storage)
+- Google Generative AI (Gemini 2.0 Flash Lite for transcript analysis)
+- TanStack React Query for server state management
 
----
+**Additional:**
+- PDF.js for PDF text extraction
+- React Hook Form with Zod validation
+- Lucide React icons
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 innocence-grid/
 ├── src/
-│   ├── services/           # Backend logic
-│   │   ├── gemini.ts                # Gemini API + AI insights
-│   │   ├── innocenceDetector.ts     # Main analysis orchestrator
-│   │   ├── priority.ts              # AI-powered priority scoring
-│   │   ├── transcripts.ts           # Transcript CRUD + PDF storage
-│   │   ├── commissioners.ts         # Commissioner database service
-│   │   ├── volunteers.ts            # User management
-│   │   ├── formProcessor.ts         # Enhanced form data extraction
-│   │   └── memoGeneratorEnhanced.ts # Deep parsing memo generator
-│   ├── utils/              # Utilities
-│   │   ├── transcriptChunker.ts     # Intelligent chunking
-│   │   ├── speakerParser.ts         # Speaker identification
-│   │   └── transcriptPreprocessor.ts # Text cleanup
-│   ├── pages/              # React pages
-│   │   ├── Clients.tsx              # Main page with AI insights
-│   │   ├── Dashboard.tsx            # My Case Pipeline (Kanban)
-│   │   ├── TranscriptDetail.tsx     # Analysis UI with citations
-│   │   ├── Cases.tsx                # Case analysis + commissioner panels
-│   │   ├── CommissionerBreakdown.tsx # Enhanced bias analysis
-│   │   ├── CommissionerProfile.tsx  # Individual commissioner pages
-│   │   ├── Transcripts.tsx          # Transcript list
-│   │   ├── Analyze.tsx              # Platform analytics
-│   │   ├── Upload.tsx               # File upload
-│   │   └── Login.tsx                # Authentication
-│   ├── components/         # UI components
-│   │   ├── AIRecommendationsSidebar.tsx # Priority picks
-│   │   ├── layout/
-│   │   │   ├── AppSidebar.tsx       # Main navigation
-│   │   │   └── DashboardLayout.tsx  # Layout wrapper
-│   │   └── ui/             # shadcn/ui components
-│   └── lib/                # Types, config, utils
-├── complete-commissioners-setup.sql  # Commissioner database setup
-├── add-pdf-storage.sql              # PDF storage migration
-├── FIX_MISSING_STATUS_COLUMN.sql    # Status column migration
-└── README.md                         # This file
+│   ├── services/          # Backend logic
+│   │   ├── gemini.ts                 # Gemini API integration
+│   │   ├── innocenceDetector.ts      # Analysis orchestrator
+│   │   ├── transcripts.ts            # Transcript CRUD + PDF storage
+│   │   ├── commissioners.ts          # Commissioner lookup and panel analysis
+│   │   ├── volunteers.ts             # User management
+│   │   ├── formProcessor.ts          # Multi-pattern field extraction
+│   │   ├── memoGeneratorEnhanced.ts  # Memo generation with citations
+│   │   └── priority.ts               # AI-driven priority scoring
+│   ├── utils/             # Utilities
+│   │   ├── transcriptChunker.ts      # Intelligent chunking
+│   │   ├── speakerParser.ts          # Speaker identification
+│   │   └── transcriptPreprocessor.ts # Text cleanup and normalization
+│   ├── pages/             # React pages
+│   │   ├── Clients.tsx               # Main dashboard with AI insights
+│   │   ├── Dashboard.tsx             # Personal kanban board
+│   │   ├── TranscriptDetail.tsx      # Analysis view with citations
+│   │   ├── Cases.tsx                 # Case analysis with commissioner panels
+│   │   ├── CommissionerBreakdown.tsx # Bias analysis by commissioner
+│   │   ├── CommissionerProfile.tsx   # Individual commissioner pages
+│   │   ├── Transcripts.tsx           # Transcript management
+│   │   ├── Upload.tsx                # File upload (PDF and TXT)
+│   │   └── Login.tsx                 # Authentication
+│   ├── components/        # UI components
+│   │   ├── AIRecommendationsSidebar.tsx  # Priority picks
+│   │   └── layout/                   # Navigation and layout
+│   └── lib/               # Types, config, utils
+├── supabase/              # Database setup
+│   ├── database-merged-setup.sql
+│   ├── database-commissioners-setup.sql
+│   ├── populate-commissioners-backgrounds.sql
+│   └── README.md
+├── docs/                  # Documentation
+│   ├── setup.md
+│   ├── database.md
+│   ├── ai-innocence-detection.md
+│   ├── commissioner-analysis.md
+│   └── form-and-memo-generator.md
+└── README.md
 ```
 
----
+## Quick Start
 
-## 🛠 Tech Stack
+### Prerequisites
 
-**Frontend:**
-- React 18 + TypeScript 5.8
-- Vite 5.4 (build tool)
-- Tailwind CSS 3.4 (styling)
-- shadcn/ui (50+ components)
-- React Router 6 (navigation with lazy loading)
+- Node.js 18+
+- Supabase account (free tier works)
+- Google Gemini API key (free at [aistudio.google.com](https://aistudio.google.com/apikey))
 
-**Backend:**
-- Supabase (PostgreSQL database + auth + storage)
-- Google Generative AI (Gemini 2.0 Flash Lite)
-- TanStack React Query (data fetching)
+### Setup
 
-**Additional:**
-- PDF.js (PDF text extraction)
-- Zod (validation)
-- React Hook Form (form management)
-- Lucide React (icons)
-
----
-
-## 🎨 User Interface
-
-### Navigation (5 tabs)
-1. **Clients** - Browse all cases with AI insights
-2. **My Case Pipeline** - Personal Kanban board
-3. **Transcripts** - Upload and manage transcripts
-4. **Analyse** - Platform-wide analytics
-5. **Commissioner Breakdown** - Bias analysis by commissioner
-
-### My Case Pipeline (Kanban Board)
-- **Assigned to Me** - Cases you've been assigned (status: assigned)
-- **Under Review** - Cases you're actively reviewing (status: in_review)
-  - Includes "Generate Form" button for instant memo download
-- **Forms Generated** - Cases with completed memos (status: completed)
-- **Commissioner Panel Scheduled** - Cases ready for hearing (status: flagged)
-
-### Client Cards
-Each card shows:
-- Client name and CDCR number
-- Case strength badge (High/Medium/Low)
-- Status badge (In Progress/Completed/Unassigned)
-- **AI-generated innocence insight** (not generic text!)
-- Hearing date with avatar
-- Action buttons: View Case, Analyze
-- Assignment dropdown showing "UNASSIGNED" or volunteer name
-
-### AI Priority Picks Sidebar
-- Top 3 AI-ranked cases
-- Score breakdown: Innocence / Bias / Urgency / Status
-- "Analyze" and "Assign to Me" buttons
-- Methodology explanation dialog
-
----
-
-## 🔍 How It Works
-
-### AI-Generated Innocence Insights
-
-Every client card now shows a **short, compelling sentence** extracted by AI:
-
-```
-1. Page loads with 294 client transcripts
-      ↓
-2. For first 20 visible cards:
-   - Extract first 3000 characters of transcript
-   - Send to Gemini 2.0 Flash Lite
-   - AI identifies most compelling innocence indicator
-      ↓
-3. AI looks for:
-   - Direct innocence claims
-   - Alibi evidence with corroboration
-   - Coerced confessions
-   - Witness recantations
-   - Misidentification issues
-      ↓
-4. Returns short sentence (max 15 words):
-   - "Claims he was at work when crime occurred, has time cards"
-   - "States confession was coerced after 18 hours"
-   - "Maintains innocence despite refusing plea deal"
-      ↓
-5. Display on card (italic styling)
-      ↓
-6. Load remaining insights in batches of 5
-```
-
-**Fallback Strategy:**
-- Level 1: AI-generated (best)
-- Level 2: Pattern matching (good)
-- Level 3: Generic text (fallback)
-
-### Commissioner Breakdown Analysis
-
-Now processes **all 294 transcripts** with:
-- **Database-first approach** - pulls commissioner data from Supabase
-- **Dual extraction strategies** - panel section + dialogue mentions
-- **15 bias patterns** (was 5):
-  - lack of insight, minimizing, denial, not taking responsibility, lack of remorse
-  - not suitable, unrealistic, superficial, not credible, manipulative
-  - danger to society, continues to pose risk, not rehabilitated, risk to public safety, unresolved issues
-- **12 innocence patterns** (was 6):
-  - didn't do, innocent, wrongly convicted, falsely accused, was not there
-  - someone else did, misidentification, actually innocent, false testimony, etc.
-- **Enhanced name validation** - filters out "Commissioner AND" and other false positives
-- **Real-time statistics logging** to browser console
-
----
-
-## 📚 Documentation
-
-### Core Documentation
-- **[AI_INNOCENCE_INSIGHTS.md](./AI_INNOCENCE_INSIGHTS.md)** - AI insights feature guide
-- **[COMMISSIONER_BREAKDOWN_FIXED.md](./COMMISSIONER_BREAKDOWN_FIXED.md)** - Enhanced bias detection
-- **[MEMO_GENERATOR_IMPLEMENTATION.md](./MEMO_GENERATOR_IMPLEMENTATION.md)** - Deep parsing memo generator
-- **[PDF_STORAGE_SETUP_GUIDE.md](./PDF_STORAGE_SETUP_GUIDE.md)** - PDF storage configuration
-
-### Recent Updates
-- **[NAVIGATION_AND_DASHBOARD_UPDATES.md](./NAVIGATION_AND_DASHBOARD_UPDATES.md)** - Navigation changes
-- **[DASHBOARD_RENAME_SUMMARY.md](./DASHBOARD_RENAME_SUMMARY.md)** - "My Case Pipeline" renaming
-- **[REMOVE_FORM_GENERATOR_TAB.md](./REMOVE_FORM_GENERATOR_TAB.md)** - Navigation simplification
-- **[UNASSIGNED_BUTTON_FIX.md](./UNASSIGNED_BUTTON_FIX.md)** - Assignment dropdown fix
-- **[BUTTON_TEXT_UPDATE.md](./BUTTON_TEXT_UPDATE.md)** - "Assign to Me" button updates
-
-### SQL Migrations
-- **[complete-commissioners-setup.sql](./complete-commissioners-setup.sql)** - Commissioner database
-- **[add-pdf-storage.sql](./add-pdf-storage.sql)** - PDF storage columns
-- **[FIX_MISSING_STATUS_COLUMN.sql](./FIX_MISSING_STATUS_COLUMN.sql)** - Status tracking columns
-- **[add-brenna-kantrovitz.sql](./add-brenna-kantrovitz.sql)** - LinkedIn profile
-- **[add-robert-barton.sql](./add-robert-barton.sql)** - CDCR profile
-
----
-
-## 📊 Database Schema
-
-**Core Tables:**
-- `transcripts` - Uploaded transcripts with metadata + PDF URLs
-- `predictions` - AI analysis results
-- `volunteers` - User accounts
-- `commissioners` - 23+ BPH commissioners with backgrounds
-- `case_assignments` - Assignment tracking
-- `case_notes` - Volunteer annotations
-- `commissioner_hearings` - Hearing assignments
-- `commissioner_statistics` - Performance metrics
-
-**New Columns:**
-- `transcripts.status` - assigned | in_review | completed | flagged | unassigned
-- `transcripts.assigned_to` - Volunteer ID
-- `transcripts.assigned_at` - Assignment timestamp
-- `transcripts.form_data` - Generated form JSON
-- `transcripts.pdf_url` - Supabase Storage URL
-- `transcripts.pdf_file_size` - File size in bytes
-- `commissioners.background_category` - Background type
-- `commissioners.background_details` - Detailed background info
-- `commissioners.profile_url` - LinkedIn or CDCR profile link
-
-See `complete-commissioners-setup.sql` for full schema.
-
----
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**AI insights not loading:**
-- Check `VITE_GEMINI_API_KEY` in `.env`
-- Verify API key at https://aistudio.google.com
-- Check browser console for errors
-- Insights load progressively (first 20 cards, then batches of 5)
-
-**Cases not moving between Kanban columns:**
-- Verify `status`, `assigned_to`, `assigned_at`, `form_data` columns exist
-- Run `FIX_MISSING_STATUS_COLUMN.sql` in Supabase SQL Editor
-- Check browser console for update errors
-
-**Commissioner backgrounds showing "Unknown":**
-- Run `complete-commissioners-setup.sql` to populate database
-- Verify commissioners table has 23+ rows
-- Check `background_category` and `background_details` columns exist
-
-**PDF "View Full Transcript" not working:**
-- Run `add-pdf-storage.sql` to add PDF columns
-- Create `transcript-pdfs` bucket in Supabase Storage
-- Set bucket to public access
-- Re-upload transcripts to generate PDF URLs
-
-**"No inmate speech found":**
-- Check transcript formatting
-- Ensure speaker labels exist (e.g., "INMATE:", "DEFENDANT:")
-- Check browser console for diagnostics
-
-**Port conflict (port 3000 in use):**
+1. Clone the repository:
 ```bash
-# Kill process on port 3000
-lsof -ti:3000 | xargs kill -9
-# Or use different port
-PORT=3003 npm run dev
+git clone https://github.com/aimiwamy03/innocence-grid.git
+cd innocence-grid
+npm install
 ```
 
----
+2. Set up Supabase:
+   - Create a new project at [supabase.com](https://supabase.com)
+   - Run the SQL files in `supabase/` (see `supabase/README.md` for order)
+   - Create a storage bucket named `transcript-pdfs` (public access)
 
-## 📈 Performance
+3. Configure environment variables:
+```bash
+# Create .env file
+VITE_SUPABASE_URL=your-project-url
+VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_GEMINI_API_KEY=your-gemini-api-key
+```
 
-**Analysis Time:**
-- Small transcript (< 5 pages): 10-20 seconds
-- Medium (5-15 pages): 30-60 seconds
-- Large (15+ pages): 1-3 minutes
+4. Start the development server:
+```bash
+npm run dev
+```
 
-**AI Insights Generation:**
-- First 20 cards: 20-40 seconds
-- Progressive loading in batches of 5
-- Cached per session (no re-generation on navigation)
+Visit [http://localhost:5173](http://localhost:5173)
 
-**API Limits:**
-- Gemini 2.0 Flash Lite: 15 requests/minute (free tier)
-- Built-in delay: 2 seconds between chunks
-- Batch processing to avoid rate limits
+### Available Scripts
 
-**Optimization:**
-- Lazy loading for route-based code splitting
-- Memoization of expensive calculations
-- N+1 query resolution (single JOIN queries)
-- Progressive loading of AI insights
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run lint` - Run ESLint
+- `npm run preview` - Preview production build
 
----
+## How the AI Analysis Works
 
-## 🤝 Contributing
+1. **Preprocessing** - Transcripts are cleaned (line numbers removed, speaker labels normalized, OCR errors fixed)
+2. **Chunking** - Text is split into 3000-4000 character chunks at speaker boundaries to preserve context
+3. **AI Analysis** - Gemini 2.0 Flash Lite analyzes each chunk for the four signal types using a specialized prompt
+4. **Validation** - Every finding must include exact quotes, line numbers, page numbers, and speaker identification
+5. **Aggregation** - Results are combined, deduplicated, ranked by confidence, and stored with citations
 
-This project was built for Hack for Social Good 2025. Contributions welcome!
+The system uses a fallback strategy: AI-generated insights (best), pattern matching (good), or generic text (fallback).
 
-### Development Workflow
+For transcripts, the first 20 visible client cards load AI insights immediately, with remaining insights loading progressively in batches of 5 to optimize performance.
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Run linter: `npm run lint`
-5. Build: `npm run build`
-6. Commit: `git commit -m "Add amazing feature"`)
-7. Push: `git push origin feature/amazing-feature`
-8. Open a Pull Request
+## Team / Credits
 
-### Code Style
-- TypeScript strict mode enabled
-- ESLint configuration included
-- Tailwind CSS for styling
-- shadcn/ui for components
+JusticeMAP was built as a team hackathon project for an innocence center. This repository is a fork of the original project by [Kaiwen Zhou](https://github.com/kaiwenzhou/innocence-grid).
 
----
+**Team members:**
+- Kaiwen Zhou
+- Aimi Wang
 
-## 🎯 Recent Major Features
+The project demonstrates how AI can accelerate the important work of identifying and advocating for wrongfully convicted individuals.
 
-### ✅ Completed (Latest)
-- AI-generated innocence insights on every client card
-- Enhanced commissioner breakdown with database integration
-- "My Case Pipeline" personalization (shows only your cases)
-- Deep parsing memo generator with multi-pattern matching
-- PDF storage and viewing with line/page citations
-- Navigation simplification (removed Form Generator tab)
-- Assignment dropdown properly shows "UNASSIGNED"
-- All "Assign to Me" buttons updated for clarity
-- Quick Actions section removed for cleaner dashboard
-- Enhanced bias detection (15 patterns vs 5)
-- Enhanced innocence detection (12 patterns vs 6)
-- Commissioner profile pages with LinkedIn/CDCR links
-- Real-time validation logging for 294 transcripts
+## Documentation
 
----
+See the `docs/` folder for detailed guides:
 
-## 📝 License
+- `setup.md` - Installation and troubleshooting
+- `database.md` - Schema, migrations, and queries
+- `ai-innocence-detection.md` - How the AI analysis works
+- `commissioner-analysis.md` - Bias detection and panel analysis
+- `form-and-memo-generator.md` - Automated form extraction
 
-This project is part of Hack for Social Good 2025. License TBD.
+## License
 
----
-
-## 🙏 Acknowledgments
-
-- **Hack for Social Good 2025** - Hackathon host
-- **Google Gemini** - AI analysis engine
-- **Supabase** - Database and storage infrastructure
-- **shadcn/ui** - Beautiful component library
-- **California Board of Parole Hearings** - Commissioner data
-
----
-
-## 📞 Support
-
-For questions or issues:
-1. Check the documentation markdown files in the project root
-2. Review SQL migration files for database setup
-3. Check browser console for errors
-4. Verify environment variables in `.env`
-5. Open an issue on GitHub
-
----
-
-**Built with ❤️ for social justice and wrongful conviction advocacy**
-
-**GitHub:** https://github.com/kaiwenzhou/innocence-grid
+This project was built as part of a hackathon for social good. License TBD.
